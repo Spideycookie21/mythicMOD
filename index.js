@@ -1,5 +1,6 @@
 const { Client, GatewayIntentBits } = require('discord.js');
 
+// Create client with intents
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -8,8 +9,27 @@ const client = new Client({
   ]
 });
 
-const badWords = ["fuck", "shit", "bitch","nigga","nigger","pussy","dick","ass","ahh","penis","porn","fck","fuk","fcuk","goon","nig","]; // add whatever words
+// List of banned words
+const badWords = [
+  "fuck",
+  "shit",
+  "bitch",
+  "nigga",
+  "nigger",
+  "pussy",
+  "dick",
+  "ass",
+  "ahh",
+  "penis",
+  "porn",
+  "fck",
+  "fuk",
+  "fcuk",
+  "goon",
+  "nig"
+];
 
+// Normalize function to catch leetspeak and symbols
 function normalize(text) {
   return text
     .toLowerCase()
@@ -20,10 +40,12 @@ function normalize(text) {
     .replace(/[^a-z]/g, ""); // remove symbols/spaces
 }
 
+// Ready event (fixed warning)
 client.once("ready", () => {
   console.log(`Logged in as ${client.user.tag}`);
 });
 
+// Message filter
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
 
@@ -31,9 +53,10 @@ client.on("messageCreate", async (message) => {
 
   for (const word of badWords) {
     if (cleanMessage.includes(word)) {
-
+      // Delete the message
       await message.delete().catch(() => {});
 
+      // Warn the user
       await message.channel.send(
         `${message.author}, that word is not allowed.`
       );
@@ -43,4 +66,5 @@ client.on("messageCreate", async (message) => {
   }
 });
 
+// Login using environment variable (for Render, Replit, etc.)
 client.login(process.env.TOKEN);
