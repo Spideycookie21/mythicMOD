@@ -1,6 +1,14 @@
+// index.js
 const { Client, GatewayIntentBits } = require('discord.js');
+const express = require('express');
 
-// Create client with intents
+// ======= Express web server (for Render free tier) =======
+const app = express();
+app.get('/', (req, res) => res.send('Bot is running!'));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Web server listening on port ${PORT}`));
+
+// ======= Discord Bot Setup =======
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -11,25 +19,12 @@ const client = new Client({
 
 // List of banned words
 const badWords = [
-  "fuck",
-  "shit",
-  "bitch",
-  "nigga",
-  "nigger",
-  "pussy",
-  "dick",
-  "ass",
-  "ahh",
-  "penis",
-  "porn",
-  "fck",
-  "fuk",
-  "fcuk",
-  "goon",
-  "nig"
+  "fuck", "shit", "bitch", "nigga", "nigger",
+  "pussy", "dick", "ass", "ahh", "penis",
+  "porn", "fck", "fuk", "fcuk", "goon", "nig"
 ];
 
-// Normalize function to catch leetspeak and symbols
+// Normalize messages to catch leetspeak and symbols
 function normalize(text) {
   return text
     .toLowerCase()
@@ -40,7 +35,7 @@ function normalize(text) {
     .replace(/[^a-z]/g, ""); // remove symbols/spaces
 }
 
-// Ready event (fixed warning)
+// Bot ready event
 client.once("ready", () => {
   console.log(`Logged in as ${client.user.tag}`);
 });
@@ -66,5 +61,5 @@ client.on("messageCreate", async (message) => {
   }
 });
 
-// Login using environment variable (for Render, Replit, etc.)
+// Login using environment variable
 client.login(process.env.TOKEN);
